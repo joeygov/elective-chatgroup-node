@@ -61,5 +61,5 @@ typings/
 .next
 
 # heroku
-.Ds_Store
+.DS_Store
 *.env/
