@@ -1,1 +1,135 @@
-<h1>hello World</h1>
+<!doctype html>
+<html>
+
+<head>
+  <title>Socket.IO chat</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 13px Helvetica, Arial; }
+      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; } 
+      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 5px 10px; }
+      #messages li:nth-child(odd) { background: #eee; }
+      #messages { margin-bottom: 40px }
+    </style>
+  <link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css"
+    integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous">
+</head>
+
+<body>
+  <div class="jumbotron" style="background-color:#8DD9F6;  ">
+    <h1 style="text-align:center; font-size:60px; ">TALKme</h1>
+  </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm border-rounded " style="  box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.2), 0 9px 26px 0 rgba(0, 0, 0, 0.19);margin-right:20px; height: 600px; overflow: auto">
+        <div class="jumbotron" style="background-color:#1177E4; height:10px; ">
+          <h1>Group chat..</h1>
+        </div>
+        <div class="sendform">
+          <ul id="messages"></ul>
+          <div id="typing"></div>
+          <form>
+            <input id="message" autocomplete="off" /><button>Send</button>
+          </form>
+        </div>
+      </div>
+      <div class="col-sm" style=" box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.2), 0 9px 26px 0 rgba(0, 0, 0, 0.19);margin-left:10px; margin-top:50px; overflow: auto">
+        <div class="jumbotron" style="background-color:#EE3208; height:10px; ">
+          <h1>PM me...</h1>
+        </div>
+        <div class="userInput">
+          <div class="row inputName">
+            <div class="card container">
+              <label>Username</label>
+              <input type="text" id="name" class="form-control" required>
+              <br>
+              <center><button type="button" class="btn btn-primary save btn-outline-success" id="btn-user" data-toggle="button"
+                  aria-pressed="false" autocomplete="off ">Save</button></center>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="col-sm" style="  box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.2), 0 9px 26px 0 rgba(0, 0, 0, 0.19); margin-left: 25px; overflow:auto ">
+        <div class="jumbotron" style="background-color:#05A90F; height:10px; ">
+          <h1>Active now..</h1>
+        </div>
+        <ul id="activeUsers"></ul>
+      </div>
+    </div>
+  </div>
+
+
+
+  <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+  <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+  <script>
+    //code block for username
+    var socket = io();
+    function clickhere() {
+      $("#btn-user").click(function () {
+        $(".sendform").show();
+        $(".userInput").hide();
+        socket.emit('login', $("#name").val())
+      });
+    }
+
+    $(document).ready(function () {
+      $(".userInput").show();
+      $(".sendform").hide();
+      clickhere();
+
+      //code blcock for getting the message
+      $(function () {
+        var socket = io();
+        $('form').submit(function () {
+          socket.emit('chat message', $('#name').val() + ": " + $('#message').val());
+
+          $('#message').val('');
+
+          return false;
+        });
+
+        //code for aligning the message
+        socket.on('chat message', function (msg) {
+          let name = msg.split(":")
+          //console.log(name)
+          if (name[0] == $('#name').val()) {
+            $('#messages').append($('<li style=" color:red; text-align:right">').text(msg));
+          } else {
+            $('#messages').append($('<li style=" color:blue; text-align:left">').text(msg));
+          }
+          window.scrollTo(0, document.body.scrollHeight);
+        });
+
+
+        //code block for getting current users
+        socket.on('login', function (username) {
+          console.log(username);
+          $("#activeUsers").append($('<li> ').text(username + " is online."));
+        });
+
+
+        //code block for isTyping function
+        $('#message').bind('keypress', function () {
+          socket.emit('typing', $('#name').val())
+        })
+
+
+        socket.on('typing', function (username) {
+          $('#typing').html(username + " is typing a message...");
+          setTimeout(function () {
+            $("#typing").html('');
+          }, 3000);
+        })
+      })
+
+    });
+
+  </script>
+</body>
+
+</html>
