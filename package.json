@@ -1,0 +1,25 @@
+{
+  "name": "elective-chatgroup-node",
+  "version": "1.0.0",
+  "description": "sample App deployed to Heroku",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joeygov/elective-chatgroup-node.git"
+  },
+  "author": "joey",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/joeygov/elective-chatgroup-node/issues"
+  },
+  "homepage": "https://github.com/joeygov/elective-chatgroup-node#readme",
+  "engines": {
+    "node": "10.15"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
